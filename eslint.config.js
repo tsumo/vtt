@@ -9,7 +9,7 @@ export default tseslint.config(
   { ignores: ['dist'] },
   {
     settings: { react: { version: '18.3' } },
-    extends: [js.configs.recommended, ...tseslint.configs.strictTypeChecked, 'plugin:@react-three/recommended'],
+    extends: [js.configs.recommended, ...tseslint.configs.strictTypeChecked],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
@@ -23,7 +23,6 @@ export default tseslint.config(
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      'react-three': '@react-three',
     },
     rules: {
       ...react.configs.recommended.rules,
@@ -31,6 +30,18 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          args: 'all',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
     },
   },
 )
