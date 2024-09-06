@@ -21,7 +21,7 @@ export const useCameraZoom = () => {
         zoom: clamp(
           config.camera.zoomInterval[0],
           config.camera.zoomInterval[1],
-          zoom.get() + Math.sign(y) * config.camera.zoomCoef * (isWheel ? -1 : 1),
+          zoom.get() + Math.sign(y) * config.camera.zoomSpeedCoef * (isWheel ? -1 : 1),
         ),
       })
     },

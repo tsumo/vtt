@@ -32,7 +32,19 @@ export default tseslint.config(
       '@typescript-eslint/no-confusing-void-expression': 'off',
       'react/no-unknown-property': [
         'error',
-        { ignore: ['position', 'angle', 'intensity', 'penumbra', 'decay', 'onUpdate', 'transparent', 'linewidth'] },
+        {
+          ignore: [
+            'position',
+            'angle',
+            'intensity',
+            'penumbra',
+            'decay',
+            'onUpdate',
+            'transparent',
+            'linewidth',
+            'wireframe',
+          ],
+        },
       ],
       '@typescript-eslint/no-unused-vars': [
         'warn',
