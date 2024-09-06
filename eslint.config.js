@@ -30,6 +30,10 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       '@typescript-eslint/no-confusing-void-expression': 'off',
+      'react/no-unknown-property': [
+        'error',
+        { ignore: ['position', 'angle', 'intensity', 'penumbra', 'decay', 'onUpdate', 'transparent', 'linewidth'] },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
