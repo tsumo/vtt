@@ -10,7 +10,7 @@ export const useCameraZoom = () => {
 
   const [{ zoom }, set] = useSpring(() => ({
     zoom: state.camera.zoom,
-    config: config.camera.springConfig,
+    config: config.camera.zoomSpringConfig,
   }))
 
   const wheelOrPinchHandler = useCallback<Handler<'wheel' | 'pinch'>>(

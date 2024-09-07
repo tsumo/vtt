@@ -1,5 +1,4 @@
-type V2 = [number, number]
-type V3 = [number, number, number]
+import { Interval, V2, V3 } from './types'
 
 export const config = {
   camera: {
@@ -7,7 +6,9 @@ export const config = {
     far: 150,
     zoomSpeedCoef: 2,
     zoomInterval: [2, 10] as V2,
-    springConfig: { mass: 1, tension: 35, friction: 11, precision: 0.0001 },
+    zoomSpringConfig: { mass: 1, tension: 35, friction: 11, precision: 0.0001 },
+    dragSpringConfig: { mass: 1, tension: 35, friction: 11 },
+    zoomToDragSpeedCoef: [2, 10, 0.4, 0.1] as Interval,
   },
   zCoords: {
     grid: -100,

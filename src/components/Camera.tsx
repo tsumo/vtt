@@ -4,6 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { a } from '@react-spring/three'
 import { useCameraZoom } from '../hooks/useCameraZoom'
 import { config } from '../config'
+import { useCameraDrag } from '../hooks/useCameraDrag'
 
 export const Camera = () => {
   const ref = useRef<THREE.OrthographicCamera>(null)
@@ -11,6 +12,8 @@ export const Camera = () => {
   const { set, setSize } = useThree()
 
   const zoom = useCameraZoom()
+
+  const [x, y] = useCameraDrag(zoom)
 
   useLayoutEffect(() => {
     if (ref.current) set({ camera: ref.current })
@@ -23,8 +26,8 @@ export const Camera = () => {
 
   return (
     <a.orthographicCamera
-      position-x={0}
-      position-y={0}
+      position-x={x}
+      position-y={y}
       position-z={config.zCoords.camera}
       ref={ref}
       zoom={zoom}
