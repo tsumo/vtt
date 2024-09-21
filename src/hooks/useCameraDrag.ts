@@ -8,10 +8,13 @@ export const useCameraDrag = (zoom: SpringValue<number>): [SpringValue<number>, 
   const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0, config: config.camera.dragSpringConfig }))
 
   const dragHandler = useCallback<Handler<'drag'>>(
-    ({ offset: [ox, oy] }) => {
+    ({ delta: [dx, dy] }) => {
       const xCoef = mapInterval(config.camera.zoomToDragSpeedCoef, zoom.get())
       const yCoef = mapInterval(config.camera.zoomToDragSpeedCoef, zoom.get())
-      void set({ x: -ox * xCoef, y: oy * yCoef })
+      void set((_, state) => {
+        const { x: xx, y: yy } = state.get()
+        return { x: xx + -dx * xCoef, y: yy + dy * yCoef }
+      })
     },
     [set, zoom],
   )

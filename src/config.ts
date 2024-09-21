@@ -7,8 +7,8 @@ export const config = {
     zoomSpeedCoef: 2,
     zoomInterval: [2, 10] as V2,
     zoomSpringConfig: { mass: 1, tension: 35, friction: 11, precision: 0.0001 },
-    dragSpringConfig: { mass: 1, tension: 35, friction: 11 },
-    zoomToDragSpeedCoef: [2, 10, 0.4, 0.1] as Interval,
+    dragSpringConfig: { mass: 1, tension: 35, friction: 21 },
+    zoomToDragSpeedCoef: [2, 10, 15.0, 3.0] as Interval,
   },
   zCoords: {
     grid: -100,
