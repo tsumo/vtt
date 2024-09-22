@@ -1,0 +1,27 @@
+name: Demo deploy
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PUBLIC_URL: '/vtt/'
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+
+      - name: Install packages
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.3
+        with:
+          branch: master
+          folder: dist
+          token: ${{ secrets.PAT }}
+          repository-name: tsumo/tsumo.github.io
+          target-folder: vtt
+          commit-message: 'vtt (${{ github.event.head_commit.message }})'
