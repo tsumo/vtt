@@ -14,4 +14,8 @@ export const config = {
     grid: -100,
     camera: 10,
   },
+  grid: {
+    length: 200,
+    step: 10,
+  },
 }

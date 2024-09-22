@@ -1,26 +1,30 @@
+import { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { config } from '../config'
 
-const points: THREE.Vector3[] = []
+const geometry = new THREE.CircleGeometry(0.5, 6)
+const material = new THREE.MeshBasicMaterial({ color: 'lightblue' })
 
-for (let i = -220; i <= 220; i += 10) {
-  for (let j = -220; j <= 220; j += 10) {
-    points.push(new THREE.Vector3(i - 0.1, j, config.zCoords.grid))
-    points.push(new THREE.Vector3(i + 0.1, j, config.zCoords.grid))
-    points.push(new THREE.Vector3(i, j - 0.1, config.zCoords.grid))
-    points.push(new THREE.Vector3(i, j + 0.1, config.zCoords.grid))
-  }
-}
+const object = new THREE.Object3D()
 
-const onUpdate = (self: THREE.BufferGeometry) => {
-  self.setFromPoints(points)
-}
+const count = Math.pow((config.grid.length * 2) / config.grid.step + 1, 2)
 
 export const Grid = () => {
-  return (
-    <lineSegments>
-      <bufferGeometry onUpdate={onUpdate} />
-      <lineBasicMaterial transparent color="black" linewidth={2} />
-    </lineSegments>
-  )
+  const ref = useRef<THREE.InstancedMesh>(null)
+
+  useLayoutEffect(() => {
+    if (!ref.current) return
+    let id = 0
+    for (let x = -config.grid.length; x <= config.grid.length; x += config.grid.step) {
+      for (let y = -config.grid.length; y <= config.grid.length; y += config.grid.step) {
+        object.position.set(x, y, config.zCoords.grid)
+        object.updateMatrix()
+        ref.current.setMatrixAt(id, object.matrix)
+        id++
+      }
+    }
+    ref.current.instanceMatrix.needsUpdate = true
+  }, [])
+
+  return <instancedMesh ref={ref} args={[geometry, material, count]} />
 }
