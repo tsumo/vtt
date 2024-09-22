@@ -4,7 +4,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      PUBLIC_URL: '/vtt/'
+      BASE_URL: '/vtt/'
     steps:
       - uses: actions/checkout@v2
 
