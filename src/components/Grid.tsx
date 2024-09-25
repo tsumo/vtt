@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { config } from '../config'
 
 const geometry = new THREE.CircleGeometry(0.5, 6)
-const material = new THREE.MeshBasicMaterial({ color: 'lightblue' })
+const material = new THREE.MeshBasicMaterial({ color: config.colors.grid })
 
 const object = new THREE.Object3D()
 

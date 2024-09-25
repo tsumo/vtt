@@ -14,8 +14,12 @@ export const config = {
     grid: -100,
     camera: 10,
   },
+  colors: {
+    grid: '#4493be',
+    line: '#4493be',
+  },
   line: {
-    width: 1,
+    width: 2,
   },
   grid: {
     length: 200,

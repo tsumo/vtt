@@ -14,7 +14,7 @@ type GlobalState = {
 
 export const globalState = proxy<GlobalState>({
   camera: {
-    zoom: config.camera.zoomInterval[0],
+    zoom: config.camera.zoomInterval[1],
     setZoom: functionPlaceholder,
   },
 })
