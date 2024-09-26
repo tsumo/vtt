@@ -50,9 +50,10 @@ geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ver
 
 const material = new THREE.MeshBasicMaterial({
   color: config.colors.line,
-  // side: THREE.DoubleSide,
   transparent: true,
   opacity: 0.5,
+  // side: THREE.DoubleSide,
+  wireframe: true,
 })
 
 export const Line = () => {
