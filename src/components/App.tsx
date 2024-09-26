@@ -6,7 +6,6 @@ import { Line } from './Line'
 export const App = () => (
   <Canvas>
     <Camera />
-    <ambientLight intensity={Math.PI / 2} />
     <Grid />
     <Line />
   </Canvas>
