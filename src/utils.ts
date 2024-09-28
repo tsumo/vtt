@@ -28,7 +28,7 @@ export const getCirclePoint = (angle: number, radius = 1, offsetX = 0, offsetY =
 ]
 
 export const rads = {
-  45: PI / 2,
+  45: PI / 4,
   90: PI / 2,
   135: (3 * PI) / 4,
   180: PI,
