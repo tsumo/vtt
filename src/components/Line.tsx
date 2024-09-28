@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { V2 } from '../types'
 import { config } from '../config'
-import { getCirclePoint, rads } from '../utils'
+import { getCirclePoint, rads, tripletOrientation } from '../utils'
 
 const {
   line: { width: lineWidth },
@@ -12,29 +12,42 @@ const halfLineWidth = lineWidth / 2
 
 const constructLineGeometry = (points: V2[]): THREE.BufferGeometry => {
   const vertices: number[] = []
+  const paddedPoints = [...points, points.at(-1) as V2]
   for (let i = 0; i < points.length - 1; i++) {
-    const x1 = points[i][0] * gridStep
-    const y1 = points[i][1] * gridStep
-    const x2 = points[i + 1][0] * gridStep
-    const y2 = points[i + 1][1] * gridStep
-    const angle = Math.atan2(y2 - y1, x2 - x1)
+    const start = { x: paddedPoints[i][0] * gridStep, y: paddedPoints[i][1] * gridStep }
+    const end = { x: paddedPoints[i + 1][0] * gridStep, y: paddedPoints[i + 1][1] * gridStep }
+    const next = { x: paddedPoints[i + 2][0] * gridStep, y: paddedPoints[i + 2][1] * gridStep }
 
     // All lines start at this position and then get rotated
     //    p1 +------------------+ p2
     //       |                  |
-    // x1,y1 +                  + x2,y2
+    // start +                  + end
     //       |                  |
     //    p4 +------------------+ p3
 
+    const angle = Math.atan2(end.y - start.y, end.x - start.x)
     const upperPointsAngle = angle - rads[90]
     const lowerPointsAngle = angle + rads[90]
-    const p1 = [...getCirclePoint(upperPointsAngle, halfLineWidth, x1, y1), 0]
-    const p2 = [...getCirclePoint(upperPointsAngle, halfLineWidth, x2, y2), 0]
-    const p3 = [...getCirclePoint(lowerPointsAngle, halfLineWidth, x2, y2), 0]
-    const p4 = [...getCirclePoint(lowerPointsAngle, halfLineWidth, x1, y1), 0]
+    const p1 = [...getCirclePoint(upperPointsAngle, halfLineWidth, start.x, start.y), 0]
+    const p2 = [...getCirclePoint(upperPointsAngle, halfLineWidth, end.x, end.y), 0]
+    const p3 = [...getCirclePoint(lowerPointsAngle, halfLineWidth, end.x, end.y), 0]
+    const p4 = [...getCirclePoint(lowerPointsAngle, halfLineWidth, start.x, start.y), 0]
+
+    const orientationEnd = tripletOrientation(start, end, next)
+    const patchTriangle: number[] = []
+    const nextAngle = Math.atan2(next.y - end.y, next.x - end.x)
+    if (orientationEnd > 0) {
+      const nextP4 = [...getCirclePoint(nextAngle + rads[90], halfLineWidth, end.x, end.y), 0]
+      patchTriangle.push(...p3, end.x, end.y, 0, ...nextP4)
+    }
+    if (orientationEnd < 0) {
+      const nextP1 = [...getCirclePoint(nextAngle - rads[90], halfLineWidth, end.x, end.y), 0]
+      patchTriangle.push(end.x, end.y, 0, ...p2, ...nextP1)
+    }
 
     vertices.push(...p1, ...p2, ...p3)
     vertices.push(...p1, ...p3, ...p4)
+    vertices.push(...patchTriangle)
   }
 
   const geometry = new THREE.BufferGeometry()
@@ -56,7 +69,7 @@ const material = new THREE.MeshBasicMaterial({
   transparent: true,
   // opacity: 0.5,
   // side: THREE.DoubleSide,
-  wireframe: true,
+  // wireframe: true,
 })
 
 export const Line = () => {

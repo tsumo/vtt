@@ -1,4 +1,4 @@
-import { Interval } from './types'
+import { Interval, Point2 } from './types'
 
 const { max, min, PI, sin, cos } = Math
 
@@ -35,4 +35,15 @@ export const rads = {
   225: (5 * PI) / 4,
   270: (3 * PI) / 2,
   315: (7 * PI) / 4,
+}
+
+/**
+ * Orientation of ordered points. -1 for ccw, 0 for colinear, 1 for cw
+ *
+ * https://www.geeksforgeeks.org/orientation-3-ordered-points/
+ */
+export const tripletOrientation = (p1: Point2, p2: Point2, p3: Point2): number => {
+  const o = (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y)
+  if (o === 0) return 0
+  return o > 0 ? 1 : -1
 }
