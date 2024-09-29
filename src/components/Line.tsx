@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import { V2 } from '../types'
 import { config } from '../config'
 import { getCirclePoint, rads, tripletOrientation } from '../utils'
+import { useGlobalState } from '../globalState'
 
 const {
   line: { width: lineWidth },
@@ -55,14 +57,14 @@ const constructLineGeometry = (points: V2[]): THREE.BufferGeometry => {
   return geometry
 }
 
-const geometry = constructLineGeometry([
+const points: V2[] = [
   [0, 0],
   [1, 1],
   [1, 2],
   [0, 1],
   [-1, 1],
   [-1, 3],
-])
+]
 
 const material = new THREE.MeshBasicMaterial({
   color: config.colors.line,
@@ -73,6 +75,16 @@ const material = new THREE.MeshBasicMaterial({
 })
 
 export const Line = () => {
+  const {
+    cursor: { world },
+  } = useGlobalState()
+
+  const [geometry, setGeometry] = useState(() => constructLineGeometry(points))
+
+  useEffect(() => {
+    setGeometry(constructLineGeometry([...points, [world.x / gridStep, world.y / gridStep]]))
+  }, [world.x, world.y])
+
   return (
     <>
       <mesh args={[geometry, material]} />
