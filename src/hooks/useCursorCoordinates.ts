@@ -31,5 +31,6 @@ export const useCursorCoordinates = () => {
     vecRef.current.unproject(camera)
     globalState.cursor.world.x = vecRef.current.x
     globalState.cursor.world.y = vecRef.current.y
+    mouseMoved.current = false
   })
 }
