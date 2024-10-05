@@ -2,10 +2,16 @@ import { Interval, Point2 } from './types'
 
 const { max, min, PI, sin, cos } = Math
 
-export const clamp = (low: number, high: number, v: number) => max(low, min(v, high))
+export const lerp = (start: number, end: number, t: number) => start * (1 - t) + end * t
 
-export const mapInterval = ([in1Start, in1End, in2Start, in2End]: Interval, value: number) =>
-  ((value - in1Start) * (in2End - in2Start)) / (in1End - in1Start) + in2Start
+export const clamp = (v: number, low = 0, high = 1) => max(low, min(v, high))
+
+export const invlerp = (start: number, end: number, t: number) => clamp((t - start) / (end - t))
+
+// TODO add optional easing
+// Can we written as `lerp(start2, end2, invlerp(start1, end1, a))`
+export const rangeMap = ([start1, end1, start2, end2]: Interval, value: number) =>
+  ((value - start1) * (end2 - start2)) / (end1 - start1) + start2
 
 const DEG = 180 / PI
 const RAD = PI / 180

@@ -19,9 +19,9 @@ export const useCameraZoom = () => {
       const y = isWheel ? dy : my
       void set({
         zoom: clamp(
+          zoom.get() + Math.sign(y) * config.camera.zoomSpeedCoef * (isWheel ? -1 : 1),
           config.camera.zoomInterval[0],
           config.camera.zoomInterval[1],
-          zoom.get() + Math.sign(y) * config.camera.zoomSpeedCoef * (isWheel ? -1 : 1),
         ),
       })
     },
