@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Grid } from './Grid'
+import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
 import { Line } from './Line'
 import { GridSelect } from './GridSelect'
@@ -37,7 +37,7 @@ const CanvasContext = () => {
   return (
     <>
       <Camera />
-      <Grid />
+      <DotGrid />
       {nullable(mode === 1, () => (
         <Line />
       ))}

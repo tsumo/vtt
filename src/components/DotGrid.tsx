@@ -9,7 +9,7 @@ const object = new THREE.Object3D()
 
 const count = Math.pow((config.grid.length * 2) / config.grid.step + 1, 2)
 
-export const Grid = () => {
+export const DotGrid = () => {
   const ref = useRef<THREE.InstancedMesh>(null)
 
   useLayoutEffect(() => {
