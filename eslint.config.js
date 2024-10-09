@@ -71,7 +71,6 @@ export default tseslint.config(
           allowNumber: true,
           allowRegExp: false,
           allowNever: false,
-          allow: [{ from: 'lib', name: ['Error', 'URL', 'URLSearchParams'] }],
         },
       ],
     },
