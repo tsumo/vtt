@@ -61,6 +61,19 @@ export default tseslint.config(
           ignoreRestSiblings: true,
         },
       ],
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allowAny: false,
+          allowArray: false,
+          allowBoolean: false,
+          allowNullish: false,
+          allowNumber: true,
+          allowRegExp: false,
+          allowNever: false,
+          allow: [{ from: 'lib', name: ['Error', 'URL', 'URLSearchParams'] }],
+        },
+      ],
     },
   },
 )

@@ -1,0 +1,9 @@
+.domRoot {
+    position: absolute;
+    z-index: 1;
+}
+
+.hint {
+    display: flex;
+    flex-direction: column;
+}

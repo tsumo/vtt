@@ -53,3 +53,10 @@ export const tripletOrientation = (p1: Point2, p2: Point2, p3: Point2): number =
   if (o === 0) return 0
   return o > 0 ? 1 : -1
 }
+
+type Value<V> = Exclude<NonNullable<V>, false | ''>
+export const nullable = <V, R, F = null>(v: V, render: (v: Value<V>) => R, fallback?: F) => {
+  if (!v) return fallback || null
+  if (Array.isArray(v) && !v.length) return fallback || null
+  return render(v as Value<V>)
+}
