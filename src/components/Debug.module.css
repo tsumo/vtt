@@ -1,0 +1,11 @@
+.debug {
+    padding: 6px;
+    background-color: rgba(1, 1, 1, 0.6);
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: monospace;
+    white-space: pre-wrap;
+    border-bottom-left-radius: 6px;
+}

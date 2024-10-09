@@ -4,6 +4,7 @@ import { Grid } from './Grid'
 import { Camera } from './Camera'
 import { Line } from './Line'
 import { GridSelect } from './GridSelect'
+import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
 import { useKeyPress } from '../hooks/useKeyPress'
 import { nullable } from '../utils'
@@ -21,6 +22,7 @@ const Dom = () => {
           </span>
         ))}
       </div>
+      <Debug />
     </div>
   )
 }
@@ -47,10 +49,10 @@ const CanvasContext = () => {
 }
 
 export const App = () => (
-  <div>
+  <>
     <Dom />
     <Canvas>
       <CanvasContext />
     </Canvas>
-  </div>
+  </>
 )
