@@ -4,20 +4,21 @@ import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
 import { Line } from './Line'
 import { GridSelect } from './GridSelect'
+import { Terrain } from './Terrain'
 import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
 import { useKeyPress } from '../hooks/useKeyPress'
 import { nullable } from '../utils'
 import s from './App.module.css'
 
-const modes = ['line', 'cell select']
+const modes = ['line', 'cell select', 'terrain'] as const
 
 const Dom = () => {
   return (
     <div className={s.domRoot}>
       <div className={s.hint}>
         {modes.map((mode, i) => (
-          <span key="mode">
+          <span key={mode}>
             {i + 1} - {mode}
           </span>
         ))}
@@ -30,19 +31,22 @@ const Dom = () => {
 const CanvasContext = () => {
   useCursorCoordinates()
 
-  const [mode, setMode] = useState(2)
+  const [mode, setMode] = useState<(typeof modes)[number]>('terrain')
 
-  useKeyPress(useMemo(() => Object.fromEntries(modes.map((_mode, i) => [`Digit${i + 1}`, () => setMode(i + 1)])), []))
+  useKeyPress(useMemo(() => Object.fromEntries(modes.map((mode, i) => [`Digit${i + 1}`, () => setMode(mode)])), []))
 
   return (
     <>
       <Camera />
       <DotGrid />
-      {nullable(mode === 1, () => (
+      {nullable(mode === 'line', () => (
         <Line />
       ))}
-      {nullable(mode === 2, () => (
+      {nullable(mode === 'cell select', () => (
         <GridSelect />
+      ))}
+      {nullable(mode === 'terrain', () => (
+        <Terrain />
       ))}
     </>
   )
