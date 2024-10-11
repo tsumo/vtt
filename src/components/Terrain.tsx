@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { snapshot } from 'valtio'
 import * as THREE from 'three'
 import { config } from '../config'
 import { Point2 } from '../types'
-import { useGlobalState } from '../globalState'
+import { globalState, useGlobalState } from '../globalState'
 import { terrainMaterial } from '../materials'
 
 const {
@@ -14,6 +15,8 @@ const halfLineWidth = width / 2
 
 const materialSelection = new THREE.MeshBasicMaterial({
   color: 'indianred',
+  opacity: 0.5,
+  transparent: true,
 })
 
 const concatArrays = <T,>(first: T[], ...rest: T[][]) => first.concat(...rest)
@@ -67,6 +70,37 @@ const getHorizontal = (offsetX: number, offsetY: number) => {
   return pointsToPositions(p4, p3, p8, p9, offsetX, offsetY)
 }
 
+const schema: Record<string, undefined | null> = {}
+
+const generateGeometryFromSchema = (width = 3, height = 3) => {
+  const geo = new THREE.BufferGeometry()
+  const positions: number[] = []
+  for (let x = -width; x < width; x++) {
+    for (let y = -height; y < height; y++) {
+      const xx = x * step
+      const yy = y * step
+      if (!(`c${x}.${y}` in schema)) positions.push(...getCenter(xx, yy))
+      if (!(`v${x}.${y}` in schema)) positions.push(...getVertical(xx, yy))
+      if (!(`h${x}.${y}` in schema)) positions.push(...getHorizontal(xx, yy))
+      if (!(`s${x}.${y}` in schema)) positions.push(...getSquare(xx, yy))
+    }
+  }
+  const f32 = new Float32Array(positions)
+  geo.setAttribute('position', new THREE.BufferAttribute(f32, 3))
+  return geo
+}
+
+const getSchemaKey = (worldX: number, worldY: number) => {
+  const xSteps = Math.floor((worldX + halfLineWidth) / step)
+  const x = worldX - xSteps * step
+  const ySteps = Math.floor((worldY + halfLineWidth) / step)
+  const y = worldY - ySteps * step
+  const left = x >= p1.x && x < p4.x
+  const down = y >= p1.y && y < p2.y
+  const kind = left && down ? 'c' : left ? 'v' : down ? 'h' : 's'
+  return `${kind}${xSteps}.${ySteps}`
+}
+
 const createGeometrySelection = (worldX: number, worldY: number) => {
   const xSteps = Math.floor((worldX + halfLineWidth) / step)
   const x = worldX - xSteps * step
@@ -87,17 +121,26 @@ const createGeometrySelection = (worldX: number, worldY: number) => {
 }
 
 export const Terrain = () => {
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry()
-    const positions: number[] = []
-    for (let x = -3 * step; x < 3 * step; x += step) {
-      for (let y = -3 * step; y < 3 * step; y += step) {
-        positions.push(...concatArrays(getSquare(x, y), getCenter(x, y), getVertical(x, y), getHorizontal(x, y)))
+  const [geometry, setGeometry] = useState(generateGeometryFromSchema)
+
+  useEffect(() => {
+    const handleMouseClick = () => {
+      const {
+        cursor: { world },
+      } = snapshot(globalState)
+      const key = getSchemaKey(world.x, world.y)
+      if (key in schema) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete schema[key]
+      } else {
+        schema[key] = null
       }
+      setGeometry(generateGeometryFromSchema())
     }
-    const f32 = new Float32Array(positions)
-    geo.setAttribute('position', new THREE.BufferAttribute(f32, 3))
-    return geo
+    window.addEventListener('mousedown', handleMouseClick)
+    return () => {
+      window.removeEventListener('mousedown', handleMouseClick)
+    }
   }, [])
 
   const {
