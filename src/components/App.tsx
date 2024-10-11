@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber'
 import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
 import { Line } from './Line'
-import { GridSelect } from './GridSelect'
 import { Terrain } from './Terrain'
 import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
@@ -11,7 +10,7 @@ import { useKeyPress } from '../hooks/useKeyPress'
 import { nullable } from '../utils'
 import s from './App.module.css'
 
-const modes = ['line', 'cell select', 'terrain'] as const
+const modes = ['line', 'terrain'] as const
 
 const Dom = () => {
   return (
@@ -41,9 +40,6 @@ const CanvasContext = () => {
       <DotGrid />
       {nullable(mode === 'line', () => (
         <Line />
-      ))}
-      {nullable(mode === 'cell select', () => (
-        <GridSelect />
       ))}
       {nullable(mode === 'terrain', () => (
         <Terrain />

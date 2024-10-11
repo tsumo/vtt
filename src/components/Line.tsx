@@ -4,6 +4,7 @@ import { V2 } from '../types'
 import { config } from '../config'
 import { getCirclePoint, rads, tripletOrientation } from '../utils'
 import { useGlobalState } from '../globalState'
+import { terrainMaterial } from '../materials'
 
 const {
   line: { width: lineWidth },
@@ -66,14 +67,6 @@ const points: V2[] = [
   [-1, 3],
 ]
 
-const material = new THREE.MeshBasicMaterial({
-  color: config.colors.line,
-  transparent: true,
-  // opacity: 0.5,
-  // side: THREE.DoubleSide,
-  // wireframe: true,
-})
-
 export const Line = () => {
   const {
     cursor: { world },
@@ -87,7 +80,7 @@ export const Line = () => {
 
   return (
     <>
-      <mesh args={[geometry, material]} />
+      <mesh args={[geometry, terrainMaterial]} />
     </>
   )
 }

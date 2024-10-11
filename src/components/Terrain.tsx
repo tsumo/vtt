@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { config } from '../config'
 import { Point2 } from '../types'
 import { useGlobalState } from '../globalState'
+import { terrainMaterial } from '../materials'
 
 const {
   grid: { step },
@@ -10,13 +11,6 @@ const {
 } = config
 
 const halfLineWidth = width / 2
-
-const material = new THREE.MeshBasicMaterial({
-  color: config.colors.line,
-  // transparent: true,
-  // opacity: 0.5,
-  wireframe: true,
-})
 
 const materialSelection = new THREE.MeshBasicMaterial({
   color: 'indianred',
@@ -114,7 +108,7 @@ export const Terrain = () => {
 
   return (
     <>
-      <mesh args={[geometry, material]} />
+      <mesh args={[geometry, terrainMaterial]} />
       <mesh args={[geometrySelection, materialSelection]} />
     </>
   )

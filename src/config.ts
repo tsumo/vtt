@@ -15,8 +15,7 @@ export const config = {
     camera: 10,
   },
   colors: {
-    grid: '#4493be',
-    line: '#4493be',
+    terrain: '#4493be',
   },
   line: {
     width: 2,

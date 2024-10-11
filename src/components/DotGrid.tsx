@@ -1,9 +1,9 @@
 import { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { config } from '../config'
+import { dotGridMaterial } from '../materials'
 
 const geometry = new THREE.CircleGeometry(0.5, 6)
-const material = new THREE.MeshBasicMaterial({ color: config.colors.grid })
 
 const object = new THREE.Object3D()
 
@@ -26,5 +26,5 @@ export const DotGrid = () => {
     ref.current.instanceMatrix.needsUpdate = true
   }, [])
 
-  return <instancedMesh ref={ref} args={[geometry, material, count]} />
+  return <instancedMesh ref={ref} args={[geometry, dotGridMaterial, count]} />
 }
