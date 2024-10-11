@@ -15,6 +15,7 @@ type GlobalState = {
     screen: Point2
     world: Point2
   }
+  debug: Record<string, string | number>
 }
 
 export const globalState = proxy<GlobalState>({
@@ -26,6 +27,7 @@ export const globalState = proxy<GlobalState>({
     screen: { x: 0, y: 0 },
     world: { x: 0, y: 0 },
   },
+  debug: {},
 })
 
 export const useGlobalState = () => useSnapshot(globalState)
