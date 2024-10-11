@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { config } from '../config'
 import { Point2 } from '../types'
+import { useGlobalState } from '../globalState'
 
 const {
   grid: { step },
@@ -15,6 +16,10 @@ const material = new THREE.MeshBasicMaterial({
   // transparent: true,
   // opacity: 0.5,
   wireframe: true,
+})
+
+const materialSelection = new THREE.MeshBasicMaterial({
+  color: 'indianred',
 })
 
 const concatArrays = <T,>(first: T[], ...rest: T[][]) => first.concat(...rest)
@@ -68,6 +73,25 @@ const getHorizontal = (offsetX: number, offsetY: number) => {
   return pointsToPositions(p4, p3, p8, p9, offsetX, offsetY)
 }
 
+const createGeometrySelection = (worldX: number, worldY: number) => {
+  const xSteps = Math.floor((worldX + halfLineWidth) / step)
+  const x = worldX - xSteps * step
+  const ySteps = Math.floor((worldY + halfLineWidth) / step)
+  const y = worldY - ySteps * step
+  const left = x >= p1.x && x < p4.x
+  const down = y >= p1.y && y < p2.y
+  const kind = left && down ? 'center' : left ? 'vertical' : down ? 'horizontal' : 'square'
+  const geo = new THREE.BufferGeometry()
+  const positions: number[] = []
+  if (kind === 'center') positions.push(...getCenter(xSteps * step, ySteps * step))
+  if (kind === 'horizontal') positions.push(...getHorizontal(xSteps * step, ySteps * step))
+  if (kind === 'vertical') positions.push(...getVertical(xSteps * step, ySteps * step))
+  if (kind === 'square') positions.push(...getSquare(xSteps * step, ySteps * step))
+  const f32 = new Float32Array(positions)
+  geo.setAttribute('position', new THREE.BufferAttribute(f32, 3))
+  return geo
+}
+
 export const Terrain = () => {
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry()
@@ -82,5 +106,16 @@ export const Terrain = () => {
     return geo
   }, [])
 
-  return <mesh args={[geometry, material]} />
+  const {
+    cursor: { world },
+  } = useGlobalState()
+
+  const geometrySelection = useMemo(() => createGeometrySelection(world.x, world.y), [world])
+
+  return (
+    <>
+      <mesh args={[geometry, material]} />
+      <mesh args={[geometrySelection, materialSelection]} />
+    </>
+  )
 }
