@@ -2,18 +2,15 @@ import { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 import { a } from '@react-spring/three'
-import { useCameraZoom } from '../hooks/useCameraZoom'
+import { useCamera } from '../hooks/useCamera'
 import { config } from '../config'
-import { useCameraDrag } from '../hooks/useCameraDrag'
 
 export const Camera = () => {
   const ref = useRef<THREE.OrthographicCamera>(null)
 
   const { set, setSize } = useThree()
 
-  const zoom = useCameraZoom()
-
-  const [x, y] = useCameraDrag(zoom)
+  const { x, y, zoom } = useCamera()
 
   useLayoutEffect(() => {
     if (ref.current) set({ camera: ref.current })

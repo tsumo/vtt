@@ -4,7 +4,7 @@ const { max, min, PI, sin, cos } = Math
 
 export const lerp = (start: number, end: number, t: number) => start * (1 - t) + end * t
 
-export const clamp = (v: number, low = 0, high = 1) => max(low, min(v, high))
+export const clamp = (v: number, low = 0, high = 1) => min(low, max(v, high))
 
 export const invlerp = (start: number, end: number, t: number) => clamp((t - start) / (end - t))
 

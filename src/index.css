@@ -2,6 +2,11 @@ html, body, #root {
     height: 100%;
 }
 
+html {
+    /* stop two-finger swipe from triggering browser history navigation */
+    overscroll-behavior-x: contain;
+}
+
 body {
     margin: 0;
 }
