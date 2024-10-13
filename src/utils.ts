@@ -1,4 +1,4 @@
-import { Interval, Point2 } from './types'
+import { Interval, Point2, V2 } from './types'
 
 const { max, min, PI, sin, cos } = Math
 
@@ -20,7 +20,7 @@ export const rad2deg = (rad: number) => rad * DEG
 
 export const deg2rad = (deg: number) => deg * RAD
 
-export const rotateAround = (centerX: number, centerY: number, x: number, y: number, rad: number): [number, number] => {
+export const rotateAround = (centerX: number, centerY: number, x: number, y: number, rad: number): V2 => {
   const cosR = cos(rad)
   const sinR = sin(rad)
   const rx = (x - centerX) * cosR + (y - centerY) * sinR + centerX
@@ -28,7 +28,7 @@ export const rotateAround = (centerX: number, centerY: number, x: number, y: num
   return [rx, ry]
 }
 
-export const getCirclePoint = (angle: number, radius = 1, offsetX = 0, offsetY = 0): [number, number] => [
+export const getCirclePoint = (angle: number, radius = 1, offsetX = 0, offsetY = 0): V2 => [
   cos(angle) * radius + offsetX,
   sin(angle) * radius + offsetY,
 ]

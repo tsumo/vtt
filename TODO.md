@@ -1,0 +1,2 @@
+- zoom to cursor
+- drag on mobile
