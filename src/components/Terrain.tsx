@@ -90,7 +90,9 @@ const generateGeometryFromSchema = (width = 3, height = 3) => {
   return geo
 }
 
-const getSchemaKey = (worldX: number, worldY: number) => {
+type TerrainKind = 'c' | 'h' | 'v' | 's'
+
+const getTerrainCoordinates = (worldX: number, worldY: number): { kind: TerrainKind; x: number; y: number } => {
   const xSteps = Math.floor((worldX + halfLineWidth) / step)
   const x = worldX - xSteps * step
   const ySteps = Math.floor((worldY + halfLineWidth) / step)
@@ -98,23 +100,22 @@ const getSchemaKey = (worldX: number, worldY: number) => {
   const left = x >= p1.x && x < p4.x
   const down = y >= p1.y && y < p2.y
   const kind = left && down ? 'c' : left ? 'v' : down ? 'h' : 's'
-  return `${kind}${xSteps}.${ySteps}`
+  return { kind, x: xSteps, y: ySteps }
+}
+
+const getSchemaKey = (worldX: number, worldY: number) => {
+  const { kind, x, y } = getTerrainCoordinates(worldX, worldY)
+  return `${kind}${x}.${y}`
 }
 
 const createGeometrySelection = (worldX: number, worldY: number) => {
-  const xSteps = Math.floor((worldX + halfLineWidth) / step)
-  const x = worldX - xSteps * step
-  const ySteps = Math.floor((worldY + halfLineWidth) / step)
-  const y = worldY - ySteps * step
-  const left = x >= p1.x && x < p4.x
-  const down = y >= p1.y && y < p2.y
-  const kind = left && down ? 'center' : left ? 'vertical' : down ? 'horizontal' : 'square'
+  const { kind, x, y } = getTerrainCoordinates(worldX, worldY)
   const geo = new THREE.BufferGeometry()
   const positions: number[] = []
-  if (kind === 'center') positions.push(...getCenter(xSteps * step, ySteps * step))
-  if (kind === 'horizontal') positions.push(...getHorizontal(xSteps * step, ySteps * step))
-  if (kind === 'vertical') positions.push(...getVertical(xSteps * step, ySteps * step))
-  if (kind === 'square') positions.push(...getSquare(xSteps * step, ySteps * step))
+  if (kind === 'c') positions.push(...getCenter(x * step, y * step))
+  if (kind === 'h') positions.push(...getHorizontal(x * step, y * step))
+  if (kind === 'v') positions.push(...getVertical(x * step, y * step))
+  if (kind === 's') positions.push(...getSquare(x * step, y * step))
   const f32 = new Float32Array(positions)
   geo.setAttribute('position', new THREE.BufferAttribute(f32, 3))
   return geo
