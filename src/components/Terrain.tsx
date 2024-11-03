@@ -5,6 +5,7 @@ import { config } from '../config'
 import { Point2 } from '../types'
 import { globalState, useGlobalState } from '../globalState'
 import { terrainMaterial } from '../materials'
+import { nullable } from '../utils'
 
 const {
   grid: { step },
@@ -126,7 +127,11 @@ export const Terrain = () => {
 
   useEffect(() => {
     const handleMouseClick = () => {
-      const { x, y } = snapshot(globalState.cursor.world)
+      const {
+        trustedCoordinates,
+        world: { x, y },
+      } = snapshot(globalState.cursor)
+      if (!trustedCoordinates) return
       const key = getSchemaKey(x, y)
       if (key in schema) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -143,7 +148,7 @@ export const Terrain = () => {
   }, [])
 
   const {
-    cursor: { world },
+    cursor: { world, trustedCoordinates },
   } = useGlobalState()
 
   const geometrySelection = useMemo(() => createGeometrySelection(world.x, world.y), [world])
@@ -151,7 +156,9 @@ export const Terrain = () => {
   return (
     <>
       <mesh args={[geometry, terrainMaterial]} />
-      <mesh args={[geometrySelection, materialSelection]} />
+      {nullable(trustedCoordinates, () => (
+        <mesh args={[geometrySelection, materialSelection]} />
+      ))}
     </>
   )
 }

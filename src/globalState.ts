@@ -3,6 +3,7 @@ import { Point2 } from './types'
 
 type GlobalState = {
   cursor: {
+    trustedCoordinates: boolean
     screen: Point2
     world: Point2
   }
@@ -11,6 +12,7 @@ type GlobalState = {
 
 export const globalState = proxy<GlobalState>({
   cursor: {
+    trustedCoordinates: false,
     screen: { x: 0, y: 0 },
     world: { x: 0, y: 0 },
   },
