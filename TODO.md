@@ -1,2 +1,5 @@
 - zoom to cursor
-- drag on mobile
+- drag on touch device
+- crosshair controls on touch device
+- right mouse click to drag
+- update cursor position on click
