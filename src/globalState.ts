@@ -6,7 +6,7 @@ type GlobalState = {
     screen: Point2
     world: Point2
   }
-  debug: Record<string, string | number>
+  debug: Record<string, string>
 }
 
 export const globalState = proxy<GlobalState>({
