@@ -126,10 +126,8 @@ export const Terrain = () => {
 
   useEffect(() => {
     const handleMouseClick = () => {
-      const {
-        cursor: { world },
-      } = snapshot(globalState)
-      const key = getSchemaKey(world.x, world.y)
+      const { x, y } = snapshot(globalState.cursor.world)
+      const key = getSchemaKey(x, y)
       if (key in schema) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete schema[key]
