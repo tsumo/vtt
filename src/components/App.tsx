@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
@@ -14,7 +14,7 @@ const modes = ['line', 'terrain'] as const
 
 const Dom = () => {
   return (
-    <div className={s.domRoot}>
+    <>
       <div className={s.hint}>
         {modes.map((mode, i) => (
           <span key={mode}>
@@ -23,7 +23,7 @@ const Dom = () => {
         ))}
       </div>
       <Debug />
-    </div>
+    </>
   )
 }
 
@@ -48,11 +48,20 @@ const CanvasContext = () => {
   )
 }
 
-export const App = () => (
-  <>
-    <Dom />
-    <Canvas>
-      <CanvasContext />
-    </Canvas>
-  </>
-)
+export const App = () => {
+  useEffect(() => {
+    const canvasRoot = document.getElementById('canvasRoot')
+    const contextHandler = (event: MouseEvent) => event.preventDefault()
+    canvasRoot?.addEventListener('contextmenu', contextHandler)
+    return () => canvasRoot?.removeEventListener('contextmenu', contextHandler)
+  }, [])
+
+  return (
+    <>
+      <Canvas id="canvasRoot">
+        <CanvasContext />
+      </Canvas>
+      <Dom />
+    </>
+  )
+}

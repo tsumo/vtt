@@ -126,7 +126,8 @@ export const Terrain = () => {
   const [geometry, setGeometry] = useState(generateGeometryFromSchema)
 
   useEffect(() => {
-    const handleMouseClick = () => {
+    const handleMouseClick = (event: MouseEvent) => {
+      if (event.buttons !== 1) return
       const {
         trustedCoordinates,
         world: { x, y },

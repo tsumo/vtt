@@ -16,11 +16,13 @@ export const useCamera = () => {
     config: config.camera.zoomSpringConfig,
   }))
 
-  const wheelHandler = useCallback<Handler<'wheel'>>(
-    ({ delta: [dx, dy], pinching }) => {
+  const wheelOrMoveHandler = useCallback<Handler<'wheel' | 'move'>>(
+    ({ delta: [dx, dy], pinching, moving, buttons }) => {
+      if (moving && buttons !== 2) return
       if (pinching) return
-      const xCoef = rangeMap(config.camera.zoomToDragSpeedCoef, zoom.get())
-      const yCoef = rangeMap(config.camera.zoomToDragSpeedCoef, zoom.get())
+      const mod = moving ? -1 : 1
+      const xCoef = rangeMap(config.camera.zoomToDragSpeedCoef, zoom.get()) * mod
+      const yCoef = rangeMap(config.camera.zoomToDragSpeedCoef, zoom.get()) * mod
       void setPosition((_, state) => {
         const { x: xx, y: yy } = state.get()
         return { x: xx + dx * xCoef, y: yy + -dy * yCoef }
@@ -39,7 +41,8 @@ export const useCamera = () => {
   useGesture(
     {
       onPinch: pinchHandler,
-      onWheel: wheelHandler,
+      onWheel: wheelOrMoveHandler,
+      onMove: wheelOrMoveHandler,
     },
     {
       target: window,

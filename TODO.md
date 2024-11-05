@@ -1,4 +1,3 @@
 - zoom to cursor
 - drag on touch device
 - crosshair controls on touch device
-- right mouse click to drag
