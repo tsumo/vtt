@@ -8,14 +8,21 @@ import { config } from '../config'
 export const Camera = () => {
   const ref = useRef<THREE.OrthographicCamera>(null)
 
-  const { set, setSize } = useThree()
+  const { set, size } = useThree()
 
   const { x, y, zoom } = useCamera()
 
   useLayoutEffect(() => {
-    if (ref.current) set({ camera: ref.current })
-    setSize(window.innerWidth, window.innerHeight)
-  }, [set, setSize])
+    const camera = ref.current
+    if (!camera) return
+    // R3F only recomputes a camera's frustum on `size` changes, not on `camera` changes
+    camera.left = size.width / -2
+    camera.right = size.width / 2
+    camera.top = size.height / 2
+    camera.bottom = size.height / -2
+    camera.updateProjectionMatrix()
+    set({ camera })
+  }, [set, size])
 
   useFrame(({ camera }) => {
     camera.updateProjectionMatrix()
