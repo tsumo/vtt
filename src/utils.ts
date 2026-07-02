@@ -1,12 +1,12 @@
-import { Interval, Point2, V2 } from './types'
+import type { Interval, Point2, V2 } from './types'
 
 const { max, min, PI, sin, cos } = Math
 
 export const lerp = (start: number, end: number, t: number) => start * (1 - t) + end * t
 
-export const clamp = (v: number, low = 0, high = 1) => min(low, max(v, high))
+export const clamp = (v: number, low = 0, high = 1) => min(high, max(v, low))
 
-export const invlerp = (start: number, end: number, t: number) => clamp((t - start) / (end - t))
+export const invlerp = (start: number, end: number, v: number) => clamp((v - start) / (end - start))
 
 // TODO add optional easing
 // Can we written as `lerp(start2, end2, invlerp(start1, end1, a))`
