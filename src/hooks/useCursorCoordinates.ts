@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Point2 } from '../types'
 import { globalState } from '../globalState'
+import { clientToScreen, screenToWorld } from '../utils'
 import { useThreeRef } from './useThreeRef'
 
 const updateInterval = 5
@@ -17,10 +18,11 @@ export const useCursorCoordinates = () => {
 
   useEffect(() => {
     const mouseHandler = (e: MouseEvent) => {
-      mousePos.current.x = (e.clientX / window.innerWidth) * 2 - 1
-      mousePos.current.y = -((e.clientY / window.innerHeight) * 2 - 1)
-      globalState.cursor.screen.x = mousePos.current.x
-      globalState.cursor.screen.y = mousePos.current.y
+      const screen = clientToScreen(e.clientX, e.clientY, window.innerWidth, window.innerHeight)
+      mousePos.current.x = screen.x
+      mousePos.current.y = screen.y
+      globalState.cursor.screen.x = screen.x
+      globalState.cursor.screen.y = screen.y
       mouseInterrupt.current = true
       globalState.cursor.trustedCoordinates = true
       trustedCoordinates.current = true
@@ -45,10 +47,9 @@ export const useCursorCoordinates = () => {
     if (!trustedCoordinates.current) return
     counter.current = (counter.current + 1) % updateInterval
     if (!mouseInterrupt.current && counter.current !== 0) return
-    vecRef.current.set(mousePos.current.x, mousePos.current.y, 0)
-    vecRef.current.unproject(camera)
-    globalState.cursor.world.x = vecRef.current.x
-    globalState.cursor.world.y = vecRef.current.y
+    const world = screenToWorld(camera, vecRef.current, mousePos.current.x, mousePos.current.y)
+    globalState.cursor.world.x = world.x
+    globalState.cursor.world.y = world.y
     mouseInterrupt.current = false
   })
 }

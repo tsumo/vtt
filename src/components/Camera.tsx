@@ -1,20 +1,24 @@
 import { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { useFrame, useThree } from '@react-three/fiber'
-import { a } from '@react-spring/three'
+import { useThree } from '@react-three/fiber'
 import { useCamera } from '../hooks/useCamera'
 import { config } from '../config'
 
 export const Camera = () => {
   const ref = useRef<THREE.OrthographicCamera>(null)
+  const zoomInitialized = useRef(false)
 
   const { set, size } = useThree()
 
-  const { x, y, zoom } = useCamera()
+  useCamera()
 
   useLayoutEffect(() => {
     const camera = ref.current
     if (!camera) return
+    if (!zoomInitialized.current) {
+      camera.zoom = config.camera.zoomBounds[1]
+      zoomInitialized.current = true
+    }
     // R3F only recomputes a camera's frustum on `size` changes, not on `camera` changes
     camera.left = size.width / -2
     camera.right = size.width / 2
@@ -24,19 +28,5 @@ export const Camera = () => {
     set({ camera })
   }, [set, size])
 
-  useFrame(({ camera }) => {
-    camera.updateProjectionMatrix()
-  })
-
-  return (
-    <a.orthographicCamera
-      position-x={x}
-      position-y={y}
-      position-z={config.zCoords.camera}
-      ref={ref}
-      zoom={zoom}
-      up={config.camera.up}
-      far={config.camera.far}
-    />
-  )
+  return <orthographicCamera position-z={config.zCoords.camera} ref={ref} up={config.camera.up} far={config.camera.far} />
 }

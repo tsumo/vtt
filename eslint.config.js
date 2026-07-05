@@ -35,6 +35,7 @@ export default tseslint.config(
         {
           ignore: [
             'position',
+            'position-z',
             'angle',
             'intensity',
             'penumbra',
@@ -46,6 +47,8 @@ export default tseslint.config(
             'geometry',
             'material',
             'args',
+            'up',
+            'far',
           ],
         },
       ],

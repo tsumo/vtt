@@ -1,3 +1,4 @@
+import type { Camera, Vector3 } from 'three'
 import type { Interval, Point2, V2 } from './types'
 
 const { max, min, PI, sin, cos } = Math
@@ -12,6 +13,24 @@ export const invlerp = (start: number, end: number, v: number) => clamp((v - sta
 // Can we written as `lerp(start2, end2, invlerp(start1, end1, a))`
 export const rangeMap = ([start1, end1, start2, end2]: Interval, value: number) =>
   ((value - start1) * (end2 - start2)) / (end1 - start1) + start2
+
+/** Mouse position to normalized coords */
+export const clientToScreen = (clientX: number, clientY: number, width: number, height: number): Point2 => ({
+  x: (clientX / width) * 2 - 1,
+  y: -((clientY / height) * 2 - 1),
+})
+
+export const screenToWorld = (
+  camera: Camera,
+  /** Caller-owned to avoid reallocation */
+  scratch: Vector3,
+  screenX: number,
+  screenY: number,
+): Point2 => {
+  scratch.set(screenX, screenY, 0)
+  scratch.unproject(camera)
+  return { x: scratch.x, y: scratch.y }
+}
 
 const DEG = 180 / PI
 const RAD = PI / 180

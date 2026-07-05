@@ -1,14 +1,11 @@
-import { Interval, V2, V3 } from './types'
+import { V2, V3 } from './types'
 
 export const config = {
   camera: {
     up: [0, 0, 1] as V3,
     far: 150,
     zoomBounds: [2, 10] as V2,
-    wheelZoomSpeed: 0.04,
-    zoomSpringConfig: { mass: 1, tension: 35, friction: 21, precision: 0.0001 },
-    dragSpringConfig: { mass: 1, tension: 35, friction: 21, precision: 0.0001 },
-    zoomToDragSpeedCoef: [2, 10, 15.0, 3.0] as Interval,
+    wheelZoomSpeed: 0.01,
   },
   zCoords: {
     grid: -100,
