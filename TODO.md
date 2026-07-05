@@ -1,3 +1,4 @@
 - zoom to cursor
-- drag on touch device
+- check camera controls on touchpad
+  - make sure that two-finger touch pans both axes
 - crosshair controls on touch device
