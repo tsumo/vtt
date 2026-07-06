@@ -5,32 +5,21 @@ import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
 import { Line } from './Line'
 import { Terrain } from './Terrain'
+import { Hint } from './Hint'
 import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
 import { useKeyPress } from '../hooks/useKeyPress'
 import { nullable } from '../utils'
-import { globalState, useGlobalState } from '../globalState'
-import s from './App.module.css'
-
-const modes = ['line', 'terrain'] as const
+import { globalState, InteractionMode, interactionModes } from '../globalState'
 
 const toggleControlMode = () => {
   globalState.controlMode = globalState.controlMode === 'mouse' ? 'trackpad' : 'mouse'
 }
 
 const Dom = () => {
-  const { controlMode } = useGlobalState()
-
   return (
     <>
-      <div className={s.hint}>
-        {modes.map((mode, i) => (
-          <span key={mode}>
-            {i + 1} - {mode}
-          </span>
-        ))}
-        <span>t - controls: {controlMode}</span>
-      </div>
+      <Hint />
       <Debug />
     </>
   )
@@ -39,12 +28,12 @@ const Dom = () => {
 const CanvasContext = () => {
   useCursorCoordinates()
 
-  const [mode, setMode] = useState<(typeof modes)[number]>('terrain')
+  const [mode, setMode] = useState<InteractionMode>('terrain')
 
   useKeyPress(
     useMemo(
       () => ({
-        ...Object.fromEntries(modes.map((mode, i) => [`Digit${i + 1}`, () => setMode(mode)])),
+        ...Object.fromEntries(interactionModes.map((mode, i) => [`Digit${i + 1}`, () => setMode(mode)])),
         KeyT: toggleControlMode,
       }),
       [],

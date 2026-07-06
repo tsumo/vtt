@@ -4,4 +4,5 @@
     left: 6px;
     display: flex;
     flex-direction: column;
+    font-family: monospace;
 }

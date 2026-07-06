@@ -1,6 +1,9 @@
 import { proxy, useSnapshot } from 'valtio'
 import { Point2 } from './types'
 
+export const interactionModes = ['line', 'terrain'] as const
+export type InteractionMode = (typeof interactionModes)[number]
+
 export const controlModes = ['mouse', 'trackpad'] as const
 export type ControlMode = (typeof controlModes)[number]
 
