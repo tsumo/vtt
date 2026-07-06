@@ -4,6 +4,7 @@ import { useThree } from '@react-three/fiber'
 import { config } from '../config'
 import { clamp, clientToScreen, screenToWorld } from '../utils'
 import { useThreeRef } from './useThreeRef'
+import { globalState } from '../globalState'
 
 export const useCamera = () => {
   const { camera, size } = useThree()
@@ -38,7 +39,16 @@ export const useCamera = () => {
   )
 
   const wheelHandler = useCallback<Handler<'wheel'>>(
-    ({ delta: [, dy], event }) => {
+    ({ delta: [dx, dy], event }) => {
+      // Trackpad pinch-to-zoom is a wheel event with ctrlKey
+      // It should be handled by the onPinch
+      if (event.ctrlKey) return
+      if (globalState.controlMode === 'trackpad') {
+        camera.position.x -= dx / camera.zoom
+        camera.position.y += dy / camera.zoom
+        camera.updateMatrixWorld()
+        return
+      }
       zoomToPoint(camera.zoom - dy * config.camera.wheelZoomSpeed, event.clientX, event.clientY)
     },
     [camera, zoomToPoint],

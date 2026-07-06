@@ -8,11 +8,18 @@ import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
 import { useKeyPress } from '../hooks/useKeyPress'
 import { nullable } from '../utils'
+import { globalState, useGlobalState } from '../globalState'
 import s from './App.module.css'
 
 const modes = ['line', 'terrain'] as const
 
+const toggleControlMode = () => {
+  globalState.controlMode = globalState.controlMode === 'mouse' ? 'trackpad' : 'mouse'
+}
+
 const Dom = () => {
+  const { controlMode } = useGlobalState()
+
   return (
     <>
       <div className={s.hint}>
@@ -21,6 +28,7 @@ const Dom = () => {
             {i + 1} - {mode}
           </span>
         ))}
+        <span>t - controls: {controlMode}</span>
       </div>
       <Debug />
     </>
@@ -32,7 +40,15 @@ const CanvasContext = () => {
 
   const [mode, setMode] = useState<(typeof modes)[number]>('terrain')
 
-  useKeyPress(useMemo(() => Object.fromEntries(modes.map((mode, i) => [`Digit${i + 1}`, () => setMode(mode)])), []))
+  useKeyPress(
+    useMemo(
+      () => ({
+        ...Object.fromEntries(modes.map((mode, i) => [`Digit${i + 1}`, () => setMode(mode)])),
+        KeyT: toggleControlMode,
+      }),
+      [],
+    ),
+  )
 
   return (
     <>
