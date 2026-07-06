@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { StatsGl } from '@react-three/drei'
 import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
 import { Line } from './Line'
@@ -52,6 +53,7 @@ const CanvasContext = () => {
 
   return (
     <>
+      <StatsGl />
       <Camera />
       <DotGrid />
       {nullable(mode === 'line', () => (

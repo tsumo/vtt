@@ -1,6 +1,7 @@
 .hint {
     position: absolute;
-    top: 0;
+    bottom: 6px;
+    left: 6px;
     display: flex;
     flex-direction: column;
 }
