@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
-import { useCamera } from '../hooks/useCamera'
+import { useCameraControls } from '../hooks/useCameraControls'
 import { config } from '../config'
 
 export const Camera = () => {
@@ -10,7 +10,7 @@ export const Camera = () => {
 
   const { set, size } = useThree()
 
-  useCamera()
+  useCameraControls()
 
   useLayoutEffect(() => {
     const camera = ref.current
@@ -28,5 +28,7 @@ export const Camera = () => {
     set({ camera })
   }, [set, size])
 
-  return <orthographicCamera position-z={config.zCoords.camera} ref={ref} up={config.camera.up} far={config.camera.far} />
+  return (
+    <orthographicCamera position-z={config.zCoords.camera} ref={ref} up={config.camera.up} far={config.camera.far} />
+  )
 }

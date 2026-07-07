@@ -6,7 +6,7 @@ import { clamp, clientToScreen, screenToWorld } from '../utils'
 import { useThreeRef } from './useThreeRef'
 import { globalState } from '../globalState'
 
-export const useCamera = () => {
+export const useCameraControls = () => {
   const { camera, size } = useThree()
   const vecRef = useThreeRef('vector3')
 
