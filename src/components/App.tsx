@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { StatsGl } from '@react-three/drei'
 import { DotGrid } from './DotGrid'
@@ -8,13 +8,8 @@ import { Terrain } from './Terrain'
 import { Hint } from './Hint'
 import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
-import { useKeyPress } from '../hooks/useKeyPress'
 import { nullable } from '../utils'
-import { globalState, InteractionMode, interactionModes } from '../globalState'
-
-const toggleControlMode = () => {
-  globalState.controlMode = globalState.controlMode === 'mouse' ? 'trackpad' : 'mouse'
-}
+import { useGlobalState } from '../globalState'
 
 const Dom = () => {
   return (
@@ -28,27 +23,17 @@ const Dom = () => {
 const CanvasContext = () => {
   useCursorCoordinates()
 
-  const [mode, setMode] = useState<InteractionMode>('terrain')
-
-  useKeyPress(
-    useMemo(
-      () => ({
-        ...Object.fromEntries(interactionModes.map((mode, i) => [`Digit${i + 1}`, () => setMode(mode)])),
-        KeyT: toggleControlMode,
-      }),
-      [],
-    ),
-  )
+  const { interactionMode } = useGlobalState()
 
   return (
     <>
       <StatsGl />
       <Camera />
       <DotGrid />
-      {nullable(mode === 'line', () => (
+      {nullable(interactionMode === 'line', () => (
         <Line />
       ))}
-      {nullable(mode === 'terrain', () => (
+      {nullable(interactionMode === 'terrain', () => (
         <Terrain />
       ))}
     </>

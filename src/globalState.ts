@@ -13,6 +13,7 @@ type GlobalState = {
     screen: Point2
     world: Point2
   }
+  interactionMode: InteractionMode
   controlMode: ControlMode
   debug: Record<string, string>
 }
@@ -23,6 +24,7 @@ export const globalState = proxy<GlobalState>({
     screen: { x: 0, y: 0 },
     world: { x: 0, y: 0 },
   },
+  interactionMode: 'terrain',
   controlMode: 'mouse',
   debug: {},
 })
