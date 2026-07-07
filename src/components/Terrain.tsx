@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { snapshot } from 'valtio'
 import * as THREE from 'three'
 import { config } from '../config'
 import { Point2 } from '../types'
@@ -131,7 +130,7 @@ export const Terrain = () => {
       const {
         trustedCoordinates,
         world: { x, y },
-      } = snapshot(globalState.cursor)
+      } = globalState.cursor
       if (!trustedCoordinates) return
       const key = getSchemaKey(x, y)
       if (key in schema) {
