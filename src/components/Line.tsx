@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { V2 } from '../types'
 import { config } from '../config'
 import { getCirclePoint, rads, tripletOrientation } from '../utils'
-import { useGlobalState } from '../globalState'
+import { globalState, useGlobalState } from '../globalState'
 import { terrainMaterial } from '../materials'
 
 const {
@@ -58,7 +58,7 @@ const constructLineGeometry = (points: V2[]): THREE.BufferGeometry => {
   return geometry
 }
 
-const points: V2[] = [
+const initialPoints: V2[] = [
   [0, 0],
   [1, 1],
   [1, 2],
@@ -72,11 +72,30 @@ export const Line = () => {
     cursor: { world },
   } = useGlobalState()
 
+  const [points, setPoints] = useState(initialPoints)
   const [geometry, setGeometry] = useState(() => constructLineGeometry(points))
 
   useEffect(() => {
+    const handleMouseClick = (event: MouseEvent) => {
+      if (event.buttons !== 1) return
+      setPoints((prevPoints) => {
+        const newPoints: V2[] = [
+          ...prevPoints,
+          [globalState.cursor.world.x / gridStep, globalState.cursor.world.y / gridStep],
+        ]
+        setGeometry(constructLineGeometry(newPoints))
+        return newPoints
+      })
+    }
+    window.addEventListener('mousedown', handleMouseClick)
+    return () => {
+      window.removeEventListener('mousedown', handleMouseClick)
+    }
+  }, [])
+
+  useEffect(() => {
     setGeometry(constructLineGeometry([...points, [world.x / gridStep, world.y / gridStep]]))
-  }, [world.x, world.y])
+  }, [points, world.x, world.y])
 
   return (
     <>
