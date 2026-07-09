@@ -11,3 +11,9 @@ export const terrainMaterial = new THREE.MeshBasicMaterial({
   opacity: 0.5,
   wireframe: false,
 })
+
+export const selectionMaterial = new THREE.MeshBasicMaterial({
+  color: 'indianred',
+  opacity: 0.5,
+  transparent: true,
+})

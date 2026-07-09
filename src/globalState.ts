@@ -24,7 +24,7 @@ export const globalState = proxy<GlobalState>({
     screen: { x: 0, y: 0 },
     world: { x: 0, y: 0 },
   },
-  interactionMode: 'terrain',
+  interactionMode: 'line',
   controlMode: 'mouse',
   debug: {},
 })

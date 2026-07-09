@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { config } from '../config'
 import { Point2 } from '../types'
 import { globalState, useGlobalState } from '../globalState'
-import { terrainMaterial } from '../materials'
+import { selectionMaterial, terrainMaterial } from '../materials'
 import { nullable } from '../utils'
 
 const {
@@ -12,12 +12,6 @@ const {
 } = config
 
 const halfLineWidth = width / 2
-
-const materialSelection = new THREE.MeshBasicMaterial({
-  color: 'indianred',
-  opacity: 0.5,
-  transparent: true,
-})
 
 const concatArrays = <T,>(first: T[], ...rest: T[][]) => first.concat(...rest)
 
@@ -157,7 +151,7 @@ export const Terrain = () => {
     <>
       <mesh args={[geometry, terrainMaterial]} />
       {nullable(trustedCoordinates, () => (
-        <mesh args={[geometrySelection, materialSelection]} />
+        <mesh args={[geometrySelection, selectionMaterial]} />
       ))}
     </>
   )
