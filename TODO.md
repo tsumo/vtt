@@ -1,1 +1,7 @@
 - crosshair controls on touch device
+- line tool
+    - refactor into a class
+    - add patch triangle to preview segment
+    - allow closed loops
+    - add snapping
+    - line selection and point editing
