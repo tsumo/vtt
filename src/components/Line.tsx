@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import { V2 } from '../types'
 import { config } from '../config'
 import { getCirclePoint, nullable, rads, tripletOrientation } from '../utils'
 import { globalState, useGlobalState } from '../globalState'
 import { selectionMaterial, terrainMaterial } from '../materials'
+import { useRenderTrigger } from '../hooks/useRenderTrigger'
 
 const {
   line: { width: lineWidth },
@@ -65,77 +66,112 @@ const constructLineGeometry = (lines: V2[][]): THREE.BufferGeometry => {
   return geometry
 }
 
-type DrawState = { lines: V2[][]; drawing: boolean }
+class LineTool {
+  private lines: V2[][] = []
+  drawing = false
+  geometry: THREE.BufferGeometry = constructLineGeometry([])
+
+  private rightButtonDown = false
+  private rightDragged = false
+  private rightDownX = 0
+  private rightDownY = 0
+
+  constructor(private renderTrigger: () => void) {}
+
+  private recalculateGeometry() {
+    this.geometry = constructLineGeometry(this.lines)
+  }
+
+  startLine(point: V2) {
+    this.lines.push([point])
+    this.drawing = true
+    this.recalculateGeometry()
+    this.renderTrigger()
+  }
+
+  addPoint(point: V2) {
+    if (!this.drawing) return
+    const activeLine = this.lines.at(-1)
+    const lastPoint = activeLine?.at(-1)
+    if (!activeLine || !lastPoint) return
+    if (lastPoint[0] === point[0] && lastPoint[1] === point[1]) return
+    activeLine.push(point)
+    this.recalculateGeometry()
+    this.renderTrigger()
+  }
+
+  endLine() {
+    this.drawing = false
+    this.renderTrigger()
+  }
+
+  getPreviewGeometry(cursorPoint: V2): THREE.BufferGeometry | null {
+    if (!this.drawing) return null
+    const lastPoint = this.lines.at(-1)?.at(-1)
+    if (!lastPoint) return null
+    return constructLineGeometry([[lastPoint, cursorPoint]])
+  }
+
+  private handleMouseDown = (event: MouseEvent) => {
+    if (event.button === 0) {
+      if (!globalState.cursor.trustedCoordinates) return
+      const point: V2 = [globalState.cursor.world.x / gridStep, globalState.cursor.world.y / gridStep]
+      if (this.drawing) {
+        this.addPoint(point)
+      } else {
+        this.startLine(point)
+      }
+    } else if (event.button === 2) {
+      this.rightButtonDown = true
+      this.rightDragged = false
+      this.rightDownX = event.clientX
+      this.rightDownY = event.clientY
+    }
+  }
+
+  private handleMouseMove = (event: MouseEvent) => {
+    if (!this.rightButtonDown) return
+    const dist = Math.hypot(event.clientX - this.rightDownX, event.clientY - this.rightDownY)
+    if (dist > rightClickMoveThreshold) this.rightDragged = true
+  }
+
+  private handleMouseUp = (event: MouseEvent) => {
+    if (event.button !== 2) return
+    if (this.rightButtonDown && !this.rightDragged) this.endLine()
+    this.rightButtonDown = false
+  }
+
+  attach() {
+    window.addEventListener('mousedown', this.handleMouseDown)
+    window.addEventListener('mousemove', this.handleMouseMove)
+    window.addEventListener('mouseup', this.handleMouseUp)
+  }
+
+  dispose() {
+    window.removeEventListener('mousedown', this.handleMouseDown)
+    window.removeEventListener('mousemove', this.handleMouseMove)
+    window.removeEventListener('mouseup', this.handleMouseUp)
+  }
+}
 
 export const Line = () => {
   const {
     cursor: { world },
   } = useGlobalState()
 
-  const [state, setState] = useState<DrawState>({ lines: [], drawing: false })
+  const renderTrigger = useRenderTrigger()
+  const [lineTool] = useState(() => new LineTool(renderTrigger))
 
   useEffect(() => {
-    let rightButtonDown = false
-    let rightDragged = false
-    let rightDownX = 0
-    let rightDownY = 0
+    lineTool.attach()
+    return () => lineTool.dispose()
+  }, [lineTool])
 
-    const handleMouseDown = (event: MouseEvent) => {
-      if (event.button === 0) {
-        if (!globalState.cursor.trustedCoordinates) return
-        const point: V2 = [globalState.cursor.world.x / gridStep, globalState.cursor.world.y / gridStep]
-        setState((prev) => {
-          if (!prev.drawing) return { lines: [...prev.lines, [point]], drawing: true }
-          const activeLine = prev.lines.at(-1)
-          const lastPoint = activeLine?.at(-1)
-          if (!activeLine || !lastPoint) return prev
-          if (lastPoint[0] === point[0] && lastPoint[1] === point[1]) return prev
-          const lines = prev.lines.slice()
-          lines[lines.length - 1] = [...activeLine, point]
-          return { lines, drawing: true }
-        })
-      } else if (event.button === 2) {
-        rightButtonDown = true
-        rightDragged = false
-        rightDownX = event.clientX
-        rightDownY = event.clientY
-      }
-    }
-
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!rightButtonDown) return
-      const dist = Math.hypot(event.clientX - rightDownX, event.clientY - rightDownY)
-      if (dist > rightClickMoveThreshold) rightDragged = true
-    }
-
-    const handleMouseUp = (event: MouseEvent) => {
-      if (event.button !== 2) return
-      if (rightButtonDown && !rightDragged) setState((prev) => ({ ...prev, drawing: false }))
-      rightButtonDown = false
-    }
-
-    window.addEventListener('mousedown', handleMouseDown)
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('mouseup', handleMouseUp)
-    return () => {
-      window.removeEventListener('mousedown', handleMouseDown)
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [])
-
-  const geometry = useMemo(() => constructLineGeometry(state.lines), [state.lines])
-
-  const previewGeometry = useMemo(() => {
-    const lastPoint = state.drawing ? state.lines.at(-1)?.at(-1) : undefined
-    if (!lastPoint) return null
-    const pointAtCursor: V2 = [world.x / gridStep, world.y / gridStep]
-    return constructLineGeometry([[lastPoint, pointAtCursor]])
-  }, [state, world.x, world.y])
+  const previewGeometry = lineTool.getPreviewGeometry([world.x / gridStep, world.y / gridStep])
 
   return (
     <>
-      <mesh args={[geometry, terrainMaterial]} />
+      <mesh args={[lineTool.geometry, terrainMaterial]} />
       {nullable(previewGeometry, (geo) => (
         <mesh args={[geo, selectionMaterial]} />
       ))}

@@ -1,7 +1,8 @@
 - crosshair controls on touch device
+- centralize event handlers for camera and tools?
 - line tool
-    - refactor into a class
-    - add patch triangle to preview segment
+    - add patch triangle to preview segment?
     - allow closed loops
     - add snapping
     - line selection and point editing
+    - continuous drawing mode
