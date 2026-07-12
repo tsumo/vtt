@@ -1,16 +1,23 @@
-- crosshair controls on touch device
-- fix terrain material being lighter than expected on lines
-- centralize event handlers for camera and tools?
 - line tool
-    - add patch triangle to preview segment?
-    - allow closed loops
-    - add snapping
-    - line selection and point editing
-    - continuous drawing mode
+    - [x] refactor into a class
+    - [ ] add patch triangle to preview segment?
+    - [ ] allow closed loops
+    - [ ] add snapping
+    - [ ] line selection and point editing
+    - [ ] continuous drawing mode
 - terrain
-    - refactor into a class
-    - continuous drawing mode
+    - [ ] refactor into a class
+    - [ ] continuous drawing mode
 - grid
-    - different step scale for zoom levels
-- camera
-    - tune zoom settings
+    - [ ] different step scale for zoom levels
+- camera and controls
+    - [x] check camera controls on touchpad
+    - [x] make sure that two-finger touch pans both axes
+    - [x] drag on touch device
+    - [x] right mouse click to drag
+    - [x] zoom to cursor
+    - [ ] centralize event handlers for camera and tools?
+    - [ ] crosshair controls on touch device
+    - [ ] tune zoom settings
+- bugs
+    - [ ] fix terrain material being lighter than expected on lines
