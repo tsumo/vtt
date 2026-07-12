@@ -1,4 +1,5 @@
 - crosshair controls on touch device
+- fix terrain material being lighter than expected on lines
 - centralize event handlers for camera and tools?
 - line tool
     - add patch triangle to preview segment?
@@ -6,3 +7,10 @@
     - add snapping
     - line selection and point editing
     - continuous drawing mode
+- terrain
+    - refactor into a class
+    - continuous drawing mode
+- grid
+    - different step scale for zoom levels
+- camera
+    - tune zoom settings

@@ -49,6 +49,8 @@ export default tseslint.config(
             'args',
             'up',
             'far',
+            'vertexShader',
+            'fragmentShader',
           ],
         },
       ],

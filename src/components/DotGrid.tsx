@@ -1,30 +1,39 @@
-import { useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { config } from '../config'
-import { dotGridMaterial } from '../materials'
 
-const geometry = new THREE.CircleGeometry(0.5, 6)
+const extent = config.grid.length * 2
+const dotRadius = 0.5
+const color = new THREE.Color(config.colors.terrain)
 
-const object = new THREE.Object3D()
+const vertexShader = /* glsl */ `
+  varying vec2 vWorldPosition;
 
-const count = Math.pow((config.grid.length * 2) / config.grid.step + 1, 2)
+  void main() {
+    vWorldPosition = (modelMatrix * vec4(position, 1.0)).xy;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`
+
+const fragmentShader = /* glsl */ `
+  varying vec2 vWorldPosition;
+
+  void main() {
+    vec2 cell = mod(vWorldPosition + ${(config.grid.step / 2).toFixed(4)}, ${config.grid.step.toFixed(4)}) - ${(config.grid.step / 2).toFixed(4)};
+    float dist = length(cell);
+    // Smooth over ~1 screen pixel (via fwidth) so edges stay crisp at any zoom level.
+    float aa = fwidth(dist);
+    float alpha = 1.0 - smoothstep(${dotRadius.toFixed(4)} - aa, ${dotRadius.toFixed(4)} + aa, dist);
+    if (alpha <= 0.0) discard;
+    gl_FragColor = vec4(${color.r.toFixed(4)}, ${color.g.toFixed(4)}, ${color.b.toFixed(4)}, alpha);
+    #include <colorspace_fragment>
+  }
+`
 
 export const DotGrid = () => {
-  const ref = useRef<THREE.InstancedMesh>(null)
-
-  useLayoutEffect(() => {
-    if (!ref.current) return
-    let id = 0
-    for (let x = -config.grid.length; x <= config.grid.length; x += config.grid.step) {
-      for (let y = -config.grid.length; y <= config.grid.length; y += config.grid.step) {
-        object.position.set(x, y, config.zCoords.grid)
-        object.updateMatrix()
-        ref.current.setMatrixAt(id, object.matrix)
-        id++
-      }
-    }
-    ref.current.instanceMatrix.needsUpdate = true
-  }, [])
-
-  return <instancedMesh ref={ref} args={[geometry, dotGridMaterial, count]} />
+  return (
+    <mesh position={[0, 0, config.zCoords.grid]}>
+      <planeGeometry args={[extent, extent]} />
+      <shaderMaterial vertexShader={vertexShader} fragmentShader={fragmentShader} transparent />
+    </mesh>
+  )
 }
