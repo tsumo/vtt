@@ -25,6 +25,7 @@ const fragmentShader = /* glsl */ `
     float alpha = 1.0 - smoothstep(${dotRadius.toFixed(4)} - aa, ${dotRadius.toFixed(4)} + aa, dist);
     if (alpha <= 0.0) discard;
     gl_FragColor = vec4(${color.r.toFixed(4)}, ${color.g.toFixed(4)}, ${color.b.toFixed(4)}, alpha);
+    #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
 `

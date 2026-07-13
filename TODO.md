@@ -20,4 +20,5 @@
     - [ ] crosshair controls on touch device
     - [ ] tune zoom settings
 - bugs
-    - [ ] fix terrain material being lighter than expected on lines
+    - [x] fix terrain material being lighter than expected on lines
+        - dot grid custom shader didn't have tone mapping
