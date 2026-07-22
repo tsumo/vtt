@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { V2 } from '../types'
 import { config } from '../config'
@@ -76,6 +77,8 @@ class LineTool {
   private rightDownX = 0
   private rightDownY = 0
 
+  private canvasElement: HTMLElement | null = null
+
   constructor(private renderTrigger: () => void) {}
 
   private recalculateGeometry() {
@@ -141,14 +144,15 @@ class LineTool {
     this.rightButtonDown = false
   }
 
-  attach() {
-    window.addEventListener('mousedown', this.handleMouseDown)
+  attach(canvasElement: HTMLElement) {
+    this.canvasElement = canvasElement
+    canvasElement.addEventListener('mousedown', this.handleMouseDown)
     window.addEventListener('mousemove', this.handleMouseMove)
     window.addEventListener('mouseup', this.handleMouseUp)
   }
 
   dispose() {
-    window.removeEventListener('mousedown', this.handleMouseDown)
+    this.canvasElement?.removeEventListener('mousedown', this.handleMouseDown)
     window.removeEventListener('mousemove', this.handleMouseMove)
     window.removeEventListener('mouseup', this.handleMouseUp)
   }
@@ -158,14 +162,15 @@ export const Line = () => {
   const {
     cursor: { world },
   } = useGlobalState()
+  const { gl } = useThree()
 
   const renderTrigger = useRenderTrigger()
   const [lineTool] = useState(() => new LineTool(renderTrigger))
 
   useEffect(() => {
-    lineTool.attach()
+    lineTool.attach(gl.domElement)
     return () => lineTool.dispose()
-  }, [lineTool])
+  }, [lineTool, gl])
 
   const previewGeometry = lineTool.getPreviewGeometry([world.x / gridStep, world.y / gridStep])
 

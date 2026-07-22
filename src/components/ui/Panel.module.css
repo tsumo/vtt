@@ -1,0 +1,12 @@
+.panel {
+    padding: 4px;
+    background-color: var(--bg);
+    border: 1px solid var(--fg);
+    border-radius: 4px;
+    display: flex;
+    gap: 4px;
+}
+
+.vertical {
+    flex-direction: column;
+}

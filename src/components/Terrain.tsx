@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { config } from '../config'
 import { Point2 } from '../types'
@@ -117,6 +118,7 @@ const createGeometrySelection = (worldX: number, worldY: number) => {
 
 export const Terrain = () => {
   const [geometry, setGeometry] = useState(generateGeometryFromSchema)
+  const { gl } = useThree()
 
   useEffect(() => {
     const handleMouseClick = (event: MouseEvent) => {
@@ -135,11 +137,12 @@ export const Terrain = () => {
       }
       setGeometry(generateGeometryFromSchema())
     }
-    window.addEventListener('mousedown', handleMouseClick)
+    const canvasElement = gl.domElement
+    canvasElement.addEventListener('mousedown', handleMouseClick)
     return () => {
-      window.removeEventListener('mousedown', handleMouseClick)
+      canvasElement.removeEventListener('mousedown', handleMouseClick)
     }
-  }, [])
+  }, [gl])
 
   const {
     cursor: { world, trustedCoordinates },

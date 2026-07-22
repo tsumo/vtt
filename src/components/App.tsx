@@ -5,17 +5,17 @@ import { DotGrid } from './DotGrid'
 import { Camera } from './Camera'
 import { Line } from './Line'
 import { Terrain } from './Terrain'
-import { Hint } from './Hint'
 import { Debug } from './Debug'
 import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
 import { nullable } from '../utils'
 import { useGlobalState } from '../globalState'
+import { UiLayer } from './UiLayer'
 
 const Dom = () => {
   return (
     <>
-      <Hint />
       <Debug />
+      <UiLayer />
     </>
   )
 }

@@ -9,6 +9,8 @@ html {
 
 body {
     margin: 0;
+    --bg: white;
+    --fg: black;
 }
 
 #root {

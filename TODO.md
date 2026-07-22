@@ -1,3 +1,8 @@
+- ui kit
+    - [x] panels
+    - [x] buttons
+- toolbar
+    - [x] tool selection
 - line tool
     - [x] refactor into a class
     - [ ] add patch triangle to preview segment?
@@ -16,9 +21,11 @@
     - [x] drag on touch device
     - [x] right mouse click to drag
     - [x] zoom to cursor
-    - [ ] centralize event handlers for camera and tools?
+    - [x] differentiate event handlers for camera and tools
     - [ ] crosshair controls on touch device
     - [ ] tune zoom settings
 - bugs
     - [x] fix terrain material being lighter than expected on lines
         - dot grid custom shader didn't have tone mapping
+- tech
+    - [ ] update react and get rid of forwardRef

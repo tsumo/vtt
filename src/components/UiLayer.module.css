@@ -1,0 +1,10 @@
+.uiLayer {
+    position:absolute;
+    top: 0;
+    left: 6px;
+    height: 100%;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
