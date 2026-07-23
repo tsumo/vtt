@@ -3,4 +3,13 @@
     background-color: var(--bg);
     border: 1px solid var(--fg);
     border-radius: 4px;
+    transition: background-color 0.1s ease-in-out;
+}
+
+.button:hover {
+    background-color: color-mix(in srgb, var(--bg), var(--fg) 10%);
+}
+
+.button:active {
+    background-color: color-mix(in srgb, var(--bg), var(--fg) 20%);
 }
