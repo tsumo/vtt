@@ -1,6 +1,7 @@
 - ui kit
     - [x] panels
     - [x] buttons
+    - [x] icons
 - toolbar
     - [x] tool selection
 - line tool
