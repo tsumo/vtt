@@ -26,12 +26,12 @@ export const UiLayer = () => {
     <div className={s.uiLayer}>
       <Panel direction="vertical">
         {interactionModes.map((mode) => (
-          <Button key={mode} onClick={() => (globalState.interactionMode = mode)}>
+          <Button key={mode} title={mode} onClick={() => (globalState.interactionMode = mode)}>
             <Icon name={interactionModeToIcon[mode]} />
           </Button>
         ))}
         <Separator />
-        <Button onClick={toggleControlMode}>
+        <Button title={controlMode} onClick={toggleControlMode}>
           <Icon name={controlModeToIcon[controlMode]} />
         </Button>
       </Panel>
