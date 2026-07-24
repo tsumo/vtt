@@ -10,6 +10,7 @@ import { useCursorCoordinates } from '../hooks/useCursorCoordinates'
 import { nullable } from '../utils'
 import { useGlobalState } from '../globalState'
 import { UiLayer } from './UiLayer'
+import s from './App.module.css'
 
 const Dom = () => {
   return (
@@ -27,7 +28,7 @@ const CanvasContext = () => {
 
   return (
     <>
-      <StatsGl />
+      <StatsGl className={s.stats} />
       <Camera />
       <DotGrid />
       {nullable(interactionMode === 'line', () => (
