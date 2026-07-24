@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react'
+import { RefObject } from 'react'
 import * as THREE from 'three'
 import { useLazyRef } from './useLazyRef'
 
@@ -8,7 +8,7 @@ const factories = {
 
 type ThreeObject = keyof typeof factories
 
-type HookReturn<T extends ThreeObject> = MutableRefObject<ReturnType<(typeof factories)[T]>>
+type HookReturn<T extends ThreeObject> = RefObject<ReturnType<(typeof factories)[T]>>
 
 export const useThreeRef = <T extends ThreeObject>(object: T): HookReturn<T> => {
   const ref = useLazyRef(factories[object])

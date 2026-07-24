@@ -1,15 +1,13 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react'
+import { ButtonHTMLAttributes, Ref } from 'react'
 import c from 'clsx'
 import s from './Button.module.css'
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { ref?: Ref<HTMLButtonElement> }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, children, ...props }, ref) => {
+export const Button = ({ className, children, ref, ...props }: ButtonProps) => {
   return (
     <button ref={ref} className={c(s.button, className)} {...props}>
       {children}
     </button>
   )
-})
-
-Button.displayName = 'Button'
+}

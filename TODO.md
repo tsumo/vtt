@@ -29,4 +29,4 @@
     - [x] fix terrain material being lighter than expected on lines
         - dot grid custom shader didn't have tone mapping
 - tech
-    - [ ] update react and get rid of forwardRef
+    - [x] update react and get rid of forwardRef
