@@ -6,6 +6,7 @@ import { Point2 } from '../types'
 import { globalState, useGlobalState } from '../globalState'
 import { selectionMaterial, terrainMaterial } from '../materials'
 import { nullable } from '../utils'
+import { useRenderTrigger } from '../hooks/useRenderTrigger'
 
 const {
   grid: { step },
@@ -65,9 +66,9 @@ const getHorizontal = (offsetX: number, offsetY: number) => {
   return pointsToPositions(p4, p3, p8, p9, offsetX, offsetY)
 }
 
-const schema: Record<string, undefined | null> = {}
+type TerrainSchema = Record<string, undefined | null>
 
-const generateGeometryFromSchema = (width = 3, height = 3) => {
+const generateGeometryFromSchema = (schema: TerrainSchema, width = 3, height = 3) => {
   const geo = new THREE.BufferGeometry()
   const positions: number[] = []
   for (let x = -width; x < width; x++) {
@@ -116,45 +117,75 @@ const createGeometrySelection = (worldX: number, worldY: number) => {
   return geo
 }
 
+class TerrainTool {
+  private schema: TerrainSchema = {}
+  geometry: THREE.BufferGeometry = generateGeometryFromSchema(this.schema)
+
+  private canvasElement: HTMLElement | null = null
+
+  constructor(private renderTrigger: () => void) {}
+
+  private recalculateGeometry() {
+    this.geometry = generateGeometryFromSchema(this.schema)
+  }
+
+  toggleTile(worldX: number, worldY: number) {
+    const key = getSchemaKey(worldX, worldY)
+    if (key in this.schema) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete this.schema[key]
+    } else {
+      this.schema[key] = null
+    }
+    this.recalculateGeometry()
+    this.renderTrigger()
+  }
+
+  getSelectionGeometry(worldX: number, worldY: number): THREE.BufferGeometry {
+    return createGeometrySelection(worldX, worldY)
+  }
+
+  private handleMouseDown = (event: MouseEvent) => {
+    if (event.buttons !== 1) return
+    const { trustedCoordinates, world } = globalState.cursor
+    if (!trustedCoordinates) return
+    this.toggleTile(world.x, world.y)
+  }
+
+  attach(canvasElement: HTMLElement) {
+    this.canvasElement = canvasElement
+    canvasElement.addEventListener('mousedown', this.handleMouseDown)
+  }
+
+  dispose() {
+    this.canvasElement?.removeEventListener('mousedown', this.handleMouseDown)
+  }
+}
+
 export const Terrain = () => {
-  const [geometry, setGeometry] = useState(generateGeometryFromSchema)
-  const { gl } = useThree()
-
-  useEffect(() => {
-    const handleMouseClick = (event: MouseEvent) => {
-      if (event.buttons !== 1) return
-      const {
-        trustedCoordinates,
-        world: { x, y },
-      } = globalState.cursor
-      if (!trustedCoordinates) return
-      const key = getSchemaKey(x, y)
-      if (key in schema) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete schema[key]
-      } else {
-        schema[key] = null
-      }
-      setGeometry(generateGeometryFromSchema())
-    }
-    const canvasElement = gl.domElement
-    canvasElement.addEventListener('mousedown', handleMouseClick)
-    return () => {
-      canvasElement.removeEventListener('mousedown', handleMouseClick)
-    }
-  }, [gl])
-
   const {
     cursor: { world, trustedCoordinates },
   } = useGlobalState()
+  const { gl } = useThree()
 
-  const geometrySelection = useMemo(() => createGeometrySelection(world.x, world.y), [world])
+  const renderTrigger = useRenderTrigger()
+  const [terrainTool] = useState(() => new TerrainTool(renderTrigger))
+
+  useEffect(() => {
+    terrainTool.attach(gl.domElement)
+    return () => terrainTool.dispose()
+  }, [terrainTool, gl])
+
+  const selectionGeometry = useMemo(
+    () => terrainTool.getSelectionGeometry(world.x, world.y),
+    [terrainTool, world.x, world.y],
+  )
 
   return (
     <>
-      <mesh args={[geometry, terrainMaterial]} />
+      <mesh args={[terrainTool.geometry, terrainMaterial]} />
       {nullable(trustedCoordinates, () => (
-        <mesh args={[geometrySelection, selectionMaterial]} />
+        <mesh args={[selectionGeometry, selectionMaterial]} />
       ))}
     </>
   )

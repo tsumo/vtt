@@ -12,7 +12,7 @@
     - [ ] line selection and point editing
     - [ ] continuous drawing mode
 - terrain
-    - [ ] refactor into a class
+    - [x] refactor into a class
     - [ ] continuous drawing mode
 - grid
     - [ ] different step scale for zoom levels
